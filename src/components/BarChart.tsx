@@ -1,12 +1,19 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import { CountryData } from '../App';
 
-export const BarChart = () => {
+interface BarChartData {
+    chartData: CountryData []
+}
+
+export const BarChart:React.FC<BarChartData> = ({ chartData }) => {
+
+    const rootRef = useRef<HTMLDivElement | null>(null)
 
     useLayoutEffect(() => {
-        
+
         const root = am5.Root.new("chartdiv")
 
         root.setThemes([
@@ -80,43 +87,8 @@ export const BarChart = () => {
             return chart.get("colors")?.getIndex(series.columns.indexOf(target));
         });
 
-        const data = [{
-            country: "USA",
-            value: 2025
-            }, {
-            country: "China",
-            value: 1882
-            }, {
-            country: "Japan",
-            value: 1809
-            }, {
-            country: "Germany",
-            value: 1322
-            }, {
-            country: "UK",
-            value: 1122
-            }, {
-            country: "France",
-            value: 1114
-            }, {
-            country: "India",
-            value: 984
-            }, {
-            country: "Spain",
-            value: 711
-            }, {
-            country: "Netherlands",
-            value: 665
-            }, {
-            country: "South Korea",
-            value: 443
-            }, {
-            country: "Canada",
-            value: 441
-        }];
-
-        xAxis.data.setAll(data);
-        series.data.setAll(data);
+        xAxis.data.setAll(chartData);
+        series.data.setAll(chartData);
 
         series.appear(1000);
         chart.appear(1000, 100);
@@ -124,9 +96,9 @@ export const BarChart = () => {
         return () => {
             root.dispose();
         };
-    },[])
+    },[chartData])
 
     return (
-        <div id="chartdiv" style={{ width: "80%", height: "70vh" }}></div>
+        <div ref={rootRef} id="chartdiv" style={{ width: "80%", height: "70vh" }}></div>
     )
 }
